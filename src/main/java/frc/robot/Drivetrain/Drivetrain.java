@@ -1,5 +1,4 @@
 package frc.robot.Drivetrain;
-
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -11,6 +10,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Drivetrain.Constants.ModuleConstants.BackLeft;
@@ -64,6 +64,7 @@ public class Drivetrain extends DogLog implements Subsystem{
         gyro = new AHRS(NavXComType.kMXP_SPI);
         // 初始化位置估算器，使用機器人運動學、陀螺儀角度和模組位置
         PoseEstimator = new SwerveDrivePoseEstimator(Constants.kinematics, gyro.getRotation2d(), getPositions(), Constants.InitialPose);
+
     }
     /**
      * 獲取所有向量模組的位置。
@@ -112,7 +113,7 @@ public class Drivetrain extends DogLog implements Subsystem{
      * @param isOpenLoop 是否使用開環控制。
      */
     public void setState(SwerveModuleState[] states, boolean isOpenLoop){
-        IntStream.range(0, 4).forEachOrdered(i -> modules.get(i).setState(states[i], isOpenLoop));
+        IntStream.range(0, 4).forEachOrdered(i -> modules.get(i).setState(states[i], RobotBase.isSimulation() || isOpenLoop));
         log("Drivetrain/TargetStates", states);
         log("Drivetrain/TargetSpeeds", Constants.kinematics.toChassisSpeeds(states));
     }
